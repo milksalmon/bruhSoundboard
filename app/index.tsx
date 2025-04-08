@@ -47,7 +47,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <TouchableWithoutFeedback onPressIn={Pressed} onPressOut={pressRelease}><Image source={bruhImage}/></TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPressIn={Pressed} onPressOut={pressRelease}><Image source={bruhImage} style={{height: 143, width: 170}}/></TouchableWithoutFeedback>
     </View>
   );
 }
