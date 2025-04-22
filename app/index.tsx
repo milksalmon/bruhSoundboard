@@ -8,7 +8,7 @@ export default function Index() {
   const [bruhSound, setBruhSound] = useState<Audio.Sound | undefined>(undefined);
   const [LMKSound, setLMKSound] = useState<Audio.Sound | undefined>(undefined);
   const [bruhImage, setBruhImage] = useState(require('../assets/images/Button.png'));
-  const [pressCount, setPressCount] = useState(0);
+  const [pressCount, setPressCount] = useState(1);
 
   //(--- Sound manager
   async function playBruhSound() {
@@ -72,6 +72,7 @@ export default function Index() {
       }}
     >
       <TouchableWithoutFeedback onPressIn={Pressed} onPressOut={pressRelease}><Image source={bruhImage} style={{height: 143, width: 170}}/></TouchableWithoutFeedback>
+      <Text>{pressCount - 1}</Text>
     </View>
   );
 }
