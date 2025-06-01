@@ -5,7 +5,7 @@ import {Audio} from 'expo-av';
 
 
 export default function Index() {
-  const soundRefs = useRef([]); // Stores all sound instances
+  const soundRefs = useRef<Audio.Sound[]>([]);
   // const [bruhSound, setBruhSound] = useState<Audio.Sound | undefined>(undefined);
   const [LMKSound, setLMKSound] = useState<Audio.Sound | undefined>(undefined);
   const [bruhImage, setBruhImage] = useState(require('../assets/images/Button.png'));
@@ -16,13 +16,12 @@ export default function Index() {
   //(--- Sound manager
   async function playBruhSound() {
     const { sound } = await Audio.Sound.createAsync( 
-      require('../assets/sounds/bruh_sound_effect.mp3'),
+      require('../assets/sounds/bruh_sound_effect.mp3'), // Loads sound file path
     {
-      shouldPlay: true,
-    }); // The Sound file path
+      shouldPlay: true, // Makes sure the sound plays immediately
+    }); 
 
-    // setBruhSound(sound);
-    // await sound.playAsync();
+    soundRefs.current.push(sound); // Store the sound instance in the ref
 
     sound.setOnPlaybackStatusUpdate((status) => {
       if (!status.isLoaded) {
@@ -31,20 +30,14 @@ export default function Index() {
     }
       if (status.didJustFinish) {
         sound.unloadAsync();
+        
         soundRefs.current = soundRefs.current.filter(s => s !== sound);
+        
       }
     }
     );
   }
 
-  // useEffect(() => {
-  //   return bruhSound
-  //     ? () => {
-  //         console.log('Unloading Sound');
-  //         bruhSound.unloadAsync();
-  //       }
-  //     : undefined;
-  // }, [bruhSound]);
 
   async function playLMK() {
     const { sound } = await Audio.Sound.createAsync( require('../assets/sounds/let_me_know.mp3'));
