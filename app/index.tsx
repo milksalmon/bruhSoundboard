@@ -1,31 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {Text, View, TouchableWithoutFeedback, Image } from "react-native";
 import {Audio} from 'expo-av';
 
 
 
 export default function Index() {
-  const [bruhSound, setBruhSound] = useState<Audio.Sound | undefined>(undefined);
+  const soundRefs = useRef([]); // Stores all sound instances
+  // const [bruhSound, setBruhSound] = useState<Audio.Sound | undefined>(undefined);
   const [LMKSound, setLMKSound] = useState<Audio.Sound | undefined>(undefined);
   const [bruhImage, setBruhImage] = useState(require('../assets/images/Button.png'));
   const [pressCount, setPressCount] = useState(1);
 
+
+
   //(--- Sound manager
   async function playBruhSound() {
-    const { sound } = await Audio.Sound.createAsync( require('../assets/sounds/bruh_sound_effect.mp3'));
-    setBruhSound(sound);
+    const { sound } = await Audio.Sound.createAsync( 
+      require('../assets/sounds/bruh_sound_effect.mp3'),
+    {
+      shouldPlay: true,
+    }); // The Sound file path
 
-    await sound.playAsync();
+    // setBruhSound(sound);
+    // await sound.playAsync();
+
+    sound.setOnPlaybackStatusUpdate((status) => {
+      if (!status.isLoaded) {
+        console.log('Sound unloaded', status);
+        return;
+    }
+      if (status.didJustFinish) {
+        sound.unloadAsync();
+        soundRefs.current = soundRefs.current.filter(s => s !== sound);
+      }
+    }
+    );
   }
 
-  useEffect(() => {
-    return bruhSound
-      ? () => {
-          console.log('Unloading Sound');
-          bruhSound.unloadAsync();
-        }
-      : undefined;
-  }, [bruhSound]);
+  // useEffect(() => {
+  //   return bruhSound
+  //     ? () => {
+  //         console.log('Unloading Sound');
+  //         bruhSound.unloadAsync();
+  //       }
+  //     : undefined;
+  // }, [bruhSound]);
 
   async function playLMK() {
     const { sound } = await Audio.Sound.createAsync( require('../assets/sounds/let_me_know.mp3'));
@@ -45,10 +64,10 @@ export default function Index() {
   //---)
 
   
-
   function Pressed () {
     setBruhImage(require('../assets/images/Button_Pressed.png'))
   }
+
 
   function pressRelease () {
     setBruhImage(require('../assets/images/Button.png'));
